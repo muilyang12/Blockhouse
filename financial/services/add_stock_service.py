@@ -1,3 +1,4 @@
+import os
 import requests
 from io import StringIO
 from requests.exceptions import RequestException, Timeout
@@ -7,12 +8,20 @@ from django.http import HttpResponse, JsonResponse
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 import pickle
+from dotenv import load_dotenv
 
 from ..models import Stock, StockPrice
 
+load_dotenv()
+
 
 def get_save_stock_data(symbol):
-    API_KEY = "JYTVQCUC2OTBNKYH"
+    API_KEY = os.getenv("API_KEY")
+
+    if not API_KEY:
+        print("API Key is missing. Please check your .env file.")
+
+        raise Exception("Error occured.")
 
     url = f"https://www.alphavantage.co/query"
     params = {
