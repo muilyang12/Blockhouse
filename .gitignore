@@ -1,4 +1,5 @@
 .venv
 db
 **/migrations
-**/*.pyc
+*.pyc
+*.pkl

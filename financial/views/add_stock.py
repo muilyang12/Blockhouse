@@ -6,6 +6,7 @@ from io import StringIO
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from ..models import Stock, StockPrice
+from ..services import build_ml_model
 
 from django.db import transaction
 from requests.exceptions import RequestException, Timeout
@@ -69,5 +70,7 @@ def add_stock(request):
         Stock.objects.delete(symbol=symbol)
 
         return HttpResponse(status=500)
+
+    build_ml_model(data)
 
     return HttpResponse(status=201)
