@@ -1,4 +1,4 @@
 from .backtest_service import get_backtest_result
-from .add_stock_service import build_ml_model
+from .add_stock_service import get_save_stock_data, build_ml_model
 from .predict_service import predict_future_price
 from .report_service import generate_backtest_pdf_report, generate_predict_pdf_report
