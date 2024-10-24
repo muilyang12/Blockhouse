@@ -5,6 +5,7 @@ from io import BytesIO
 import base64
 import matplotlib
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 
 def html_to_pdf(html):
@@ -66,13 +67,23 @@ def generate_predict_pdf_report(symbol, original_data, prediction_result):
 def get_matplotlib_graph(symbol, original_data, prediction_data):
     matplotlib.use("Agg")
 
-    timestamps = []
-    prices = []
+    history_timestamps = []
+    history_prices = []
     for timestamp, price in original_data:
-        timestamps.append(timestamp)
-        prices.append(price)
+        history_timestamps.append(timestamp)
+        history_prices.append(price)
 
-    plt.scatter(timestamps, prices, label="Price", color="blue")
+    prediction_timestamps = []
+    prediction_prices = []
+    for timestamp, price in prediction_data.items():
+        timestamp_trimmed = timestamp.split(".")[0]
+        prediction_timestamps.append(
+            datetime.strptime(timestamp_trimmed, "%Y-%m-%dT%H:%M:%S").date()
+        )
+        prediction_prices.append(float(price))
+
+    plt.scatter(history_timestamps, history_prices, label="Price", color="blue")
+    plt.scatter(prediction_timestamps, prediction_prices, label="Price", color="red")
 
     plt.title(f"Stock Prices for {symbol}")
 
