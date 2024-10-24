@@ -24,7 +24,9 @@ def backtest_with_report(request):
     sell_ma_period = body.get("sellMovingAverage")
 
     if not all([symbol, investment_amount, buy_ma_period, sell_ma_period]):
-        return HttpResponse(status=400)
+        return JsonResponse(
+            {"error": "Not all required parameters arrived."}, status=400
+        )
 
     try:
         investment_amount = float(investment_amount)
@@ -32,14 +34,12 @@ def backtest_with_report(request):
         sell_ma_period = int(sell_ma_period)
 
     except ValueError:
-        print("Invalid parameter types.")
-
-        return HttpResponse(status=400)
+        return JsonResponse({"error": "Invalid parameter types."}, status=400)
 
     if investment_amount <= 0 or buy_ma_period <= 0 or sell_ma_period <= 0:
-        print("Negative values.")
-
-        return HttpResponse(status=400)
+        return JsonResponse(
+            {"error": "Parameters must be positive numbers."}, status=400
+        )
 
     try:
         performance_result = backtest_service(
@@ -47,8 +47,8 @@ def backtest_with_report(request):
         )
         final_Result = generate_backtest_pdf_report(symbol, performance_result)
 
-    except ValueError:
-        return HttpResponse(status=400)
+    except ValueError as e:
+        return JsonResponse({"error": str(e)}, status=400)
 
     return final_Result
 
@@ -62,9 +62,9 @@ def predict_with_report(request):
     symbol = body.get("symbol")
 
     if not symbol:
-        print("No symbol")
-
-        return HttpResponse(status=400)
+        return JsonResponse(
+            {"error": "Not all required parameters arrived."}, status=400
+        )
 
     try:
         stock = Stock.objects.get(symbol=symbol)
@@ -75,7 +75,7 @@ def predict_with_report(request):
             raise ValueError()
 
     except Stock.DoesNotExist or ValueError:
-        return JsonResponse({"error": "Stock symbol does not exist."})
+        return JsonResponse({"error": "Not registered stock."})
 
     prediction_result = predict_future_price(symbol, most_recent_timestamp)
 

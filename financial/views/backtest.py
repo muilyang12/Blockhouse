@@ -18,7 +18,9 @@ def backtest(request):
     sell_ma_period = body.get("sellMovingAverage")
 
     if not all([symbol, investment_amount, buy_ma_period, sell_ma_period]):
-        return HttpResponse(status=400)
+        return JsonResponse(
+            {"error": "Not all required parameters arrived."}, status=400
+        )
 
     try:
         investment_amount = float(investment_amount)
@@ -26,20 +28,18 @@ def backtest(request):
         sell_ma_period = int(sell_ma_period)
 
     except ValueError:
-        print("Invalid parameter types.")
-
-        return HttpResponse(status=400)
+        return JsonResponse({"error": "Invalid parameter types."}, status=400)
 
     if investment_amount <= 0 or buy_ma_period <= 0 or sell_ma_period <= 0:
-        print("Negative values.")
-
-        return HttpResponse(status=400)
+        return JsonResponse(
+            {"error": "Parameters must be positive numbers."}, status=400
+        )
 
     try:
         performance_result = backtest_service(
             symbol, investment_amount, buy_ma_period, sell_ma_period
         )
-    except ValueError:
-        return HttpResponse(status=400)
+    except ValueError as e:
+        return JsonResponse({"error": str(e)}, status=400)
 
     return JsonResponse(performance_result, status=200)

@@ -6,13 +6,15 @@ from ..models import Stock, StockPrice
 def backtest_service(
     symbol, initial_investment, buy_ma_period: int, sell_ma_period: int
 ):
-    stock = Stock.objects.get(symbol=symbol)
+    try:
+        stock = Stock.objects.get(symbol=symbol)
+    except Stock.DoesNotExist or StockPrice.DoesNotExist:
+        raise ValueError("Not registered stock")
+
     prices = StockPrice.objects.filter(stock=stock).order_by("timestamp")
 
     if not prices.exists():
-        print("No price data available for this stock.")
-
-        raise ValueError()
+        raise ValueError("No price data available for the stock.")
 
     data = pd.DataFrame.from_records(
         prices.values(
