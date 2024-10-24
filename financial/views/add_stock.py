@@ -71,6 +71,6 @@ def add_stock(request):
 
         return HttpResponse(status=500)
 
-    build_ml_model(data)
+    build_ml_model(symbol, data)
 
     return HttpResponse(status=201)
