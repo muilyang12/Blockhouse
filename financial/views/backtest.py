@@ -3,7 +3,7 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from ..services import backtest_service
+from ..services import get_backtest_result
 
 
 @csrf_exempt
@@ -36,7 +36,7 @@ def backtest(request):
         )
 
     try:
-        performance_result = backtest_service(
+        performance_result = get_backtest_result(
             symbol, investment_amount, buy_ma_period, sell_ma_period
         )
     except ValueError as e:

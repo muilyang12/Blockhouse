@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from ..models import Stock, StockPrice
 from ..services import (
-    backtest_service,
+    get_backtest_result,
     generate_backtest_pdf_report,
     predict_future_price,
     generate_predict_pdf_report,
@@ -42,7 +42,7 @@ def backtest_with_report(request):
         )
 
     try:
-        performance_result = backtest_service(
+        performance_result = get_backtest_result(
             symbol, investment_amount, buy_ma_period, sell_ma_period
         )
         final_Result = generate_backtest_pdf_report(symbol, performance_result)

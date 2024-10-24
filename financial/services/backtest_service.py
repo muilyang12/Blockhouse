@@ -3,7 +3,7 @@ import pandas as pd
 from ..models import Stock, StockPrice
 
 
-def backtest_service(
+def get_backtest_result(
     symbol, initial_investment, buy_ma_period: int, sell_ma_period: int
 ):
     try:
