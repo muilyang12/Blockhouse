@@ -34,5 +34,24 @@ def generate_backtest_pdf_report(symbol, performance_result):
         return JsonResponse({"message": "Failed to create report."})
 
 
-def generate_predict_pdf_report():
-    pass
+def generate_predict_pdf_report(symbol, prediction_result):
+    context = {
+        "symbol": symbol,
+        "result": [
+            {"timestamp": timestamp, "price": price}
+            for timestamp, price in prediction_result.items()
+        ],
+    }
+
+    html_string = render_to_string("prediction_report.html", context)
+
+    pdf = html_to_pdf(html_string)
+
+    if pdf:
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="output.pdf"'
+
+        return response
+
+    else:
+        return JsonResponse({"message": "Failed to create report."})
