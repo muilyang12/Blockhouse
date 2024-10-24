@@ -8,6 +8,8 @@
   <body>
     <h1>{{ symbol }} Prediction Report</h1>
 
+    <img src="{{ graphImage }}" alt="Graph - {{ symbol }}" />
+
     <div>
       {% for item in result %}
       <div>{{ item.timestamp }} : {{ item.price }}</div>

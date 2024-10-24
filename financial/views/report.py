@@ -78,6 +78,12 @@ def predict_with_report(request):
         return JsonResponse({"error": "Stock symbol does not exist."})
 
     prediction_result = predict_future_price(symbol, most_recent_timestamp)
-    final_result = generate_predict_pdf_report(symbol, prediction_result)
+
+    price_data = StockPrice.objects.filter(stock=stock).values(
+        "timestamp", "close_price"
+    )
+    original_data = [(data["timestamp"], data["close_price"]) for data in price_data]
+
+    final_result = generate_predict_pdf_report(symbol, original_data, prediction_result)
 
     return final_result
