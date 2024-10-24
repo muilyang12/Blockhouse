@@ -43,7 +43,7 @@ def get_backtest_result(
         if pd.isna(buy_ma) or pd.isna(sell_ma):
             continue
 
-        if low_price < buy_ma and cash >= buy_ma:
+        if low_price < buy_ma < high_price and cash >= buy_ma:
             shares_to_buy = int(cash / min(float(open_price), buy_ma))
 
             shares += shares_to_buy
@@ -51,7 +51,7 @@ def get_backtest_result(
 
             num_trades += 1
 
-        elif high_price > sell_ma and shares > 0:
+        elif low_price < sell_ma < high_price and shares > 0:
             cash += shares * sell_ma
             shares = 0
 
