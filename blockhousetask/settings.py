@@ -51,10 +51,10 @@ WSGI_APPLICATION = "blockhousetask.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "muilyang",
-        "USER": "admin",
-        "PASSWORD": "muilyang",
-        "HOST": "localhost",
+        "NAME": "BlockhouseTaskDB",
+        "USER": "muilyang",
+        "PASSWORD": "muilyang12-blockhouse-task",
+        "HOST": "blockhouse-task-db.cli4o0mscnye.us-east-1.rds.amazonaws.com",
         "PORT": "5432",
     }
 }

@@ -1,0 +1,33 @@
+name: Django Docker Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Build Docker image
+        run: docker build -t blockhouse-task .
+
+      - name: Push Docker image to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+        run: |
+          scp -o StrictHostKeyChecking=no ./docker-image.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+          ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
+            docker load -i /home/$EC2_USERNAME/docker-image.tar
+            docker stop blockhouse-task || true
+            docker rm blockhouse-task || true
+            docker run -d --name blockhouse-task -p 8000:8000 blockhouse-task
+          EOF
