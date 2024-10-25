@@ -28,7 +28,7 @@ jobs:
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
         run: |
           scp -o StrictHostKeyChecking=no ./blockhouse-task.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
-          ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
+          ssh -T -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
             docker load -i /home/$EC2_USERNAME/blockhouse-task.tar
             docker stop blockhouse-task || true
             docker rm blockhouse-task || true
