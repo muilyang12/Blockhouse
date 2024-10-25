@@ -19,14 +19,17 @@ jobs:
       - name: Build Docker image
         run: docker build -t blockhouse-task .
 
+      - name: Save Docker image as tar
+        run: docker save -o ./blockhouse-task.tar blockhouse-task
+
       - name: Push Docker image to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
         run: |
-          scp -o StrictHostKeyChecking=no ./docker-image.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+          scp -o StrictHostKeyChecking=no ./blockhouse-task.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
           ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
-            docker load -i /home/$EC2_USERNAME/docker-image.tar
+            docker load -i /home/$EC2_USERNAME/blockhouse-task.tar
             docker stop blockhouse-task || true
             docker rm blockhouse-task || true
             docker run -d --name blockhouse-task -p 8000:8000 blockhouse-task
