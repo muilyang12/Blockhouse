@@ -1,4 +1,4 @@
-name: Django Docker Build
+name: Django Docker Deploy to EC2
 
 on:
   workflow_dispatch:
