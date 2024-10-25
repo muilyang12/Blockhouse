@@ -11,26 +11,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
+      # - name: Log in to Amazon ECR
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   run: |
+      #     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 590183905213.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: SSH to EC2 and Pull Docker Image
+        uses: appleboy/ssh-action@v0.1.6
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 590183905213.dkr.ecr.us-east-1.amazonaws.com
+            docker pull 590183905213.dkr.ecr.us-east-1.amazonaws.com/blockhouse-task:latest
 
-      - name: Build Docker image
-        run: docker build -t blockhouse-task .
+      # - name: Set up SSH
+      #   uses: webfactory/ssh-agent@v0.5.3
+      #   with:
+      #     ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Save Docker image as tar
-        run: docker save -o ./blockhouse-task.tar blockhouse-task
+      # - name: Build Docker image
+      #   run: docker build -t blockhouse-task .
 
-      - name: Push Docker image to EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-        run: |
-          scp -o StrictHostKeyChecking=no ./blockhouse-task.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
-          ssh -T -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
-            docker load -i /home/$EC2_USERNAME/blockhouse-task.tar
-            docker stop blockhouse-task || true
-            docker rm blockhouse-task || true
-            docker run -d --name blockhouse-task -p 8000:8000 blockhouse-task
-          EOF
+      # - name: Save Docker image as tar
+      #   run: docker save -o ./blockhouse-task.tar blockhouse-task
+
+      # - name: Push Docker image to EC2
+      #   env:
+      #     EC2_HOST: ${{ secrets.EC2_HOST }}
+      #     EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+      #   run: |
+      #     scp -o StrictHostKeyChecking=no ./blockhouse-task.tar $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+      #     ssh -T -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
+      #       docker load -i /home/$EC2_USERNAME/blockhouse-task.tar
+      #       docker stop blockhouse-task || true
+      #       docker rm blockhouse-task || true
+      #       docker run -d --name blockhouse-task -p 8000:8000 blockhouse-task
+      #     EOF
