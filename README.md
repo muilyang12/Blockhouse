@@ -35,7 +35,6 @@ docker run --name blockhouse \
     -e POSTGRES_DB=muilyang \
     -p 5432:5432 \
     -d postgres
-
 ```
 
 ### 5. Apply Database Migrations and Run the Application
@@ -62,21 +61,21 @@ python manage.py runserver
 
 ### 2. Backtest
 
-- Endpoint: POST /financial/add-stock/
+- Endpoint: POST /financial/backtest/
 - Request Body Example:
 
 ```
 {
-   "symbol": "IBM",
-    "investmentAmount": 100000,
-    "buyMovingAverage": 50,
-    "sellMovingAverage": 200
+  "symbol": "IBM",
+  "investmentAmount": 100000,
+  "buyMovingAverage": 50,
+  "sellMovingAverage": 200
 }
 ```
 
 ### 3. Predict
 
-- Endpoint: POST /financial/add-stock/
+- Endpoint: POST /financial/predict/
 - Request Body Example:
 
 ```
@@ -87,21 +86,21 @@ python manage.py runserver
 
 ### 4. Backtest with Report
 
-- Endpoint: POST /financial/add-stock/
+- Endpoint: POST /financial/backtest-with-report/
 - Request Body Example:
 
 ```
 {
-   "symbol": "IBM",
-    "investmentAmount": 100000,
-    "buyMovingAverage": 50,
-    "sellMovingAverage": 200
+  "symbol": "IBM",
+  "investmentAmount": 100000,
+  "buyMovingAverage": 50,
+  "sellMovingAverage": 200
 }
 ```
 
 ### 5. Predict with Report
 
-- Endpoint: POST /financial/add-stock/
+- Endpoint: POST /financial/predict-with-report/
 - Request Body Example:
 
 ```
