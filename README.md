@@ -1,10 +1,16 @@
 # Blockhouse Task
 
-## Prerequisites
+## Overview
 
-- Python 3.x
+This repository contains the implementation task required as part of the application process for Blockhouse.
+
+## Technologies Used
+
+- Python
+- Django
 - PostgreSQL
 - Docker
+- GitHub Actions
 
 ## Setup
 
